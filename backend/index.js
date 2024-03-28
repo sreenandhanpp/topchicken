@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const connectDB = require('./MongoDb/connect.js');
 const cors = require('cors');
-
+const userRouter = require('./routes/userRouter.js')
 
 
 
@@ -23,6 +23,9 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// app.use('/admin/api', adminRouter);
+app.use('/user/api', userRouter);
 
 //function to start the server
 const StartServer = (MONGODB_URL) => {
