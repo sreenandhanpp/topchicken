@@ -1,9 +1,11 @@
 import React from 'react'
+import AppButton from '../../components/appButton/AppButton'
 
 const Home = () => {
+  
   return (
     <div>
-      <h1>hello</h1>
+      <AppButton text={'Create order'} />
     </div>
   )
 }

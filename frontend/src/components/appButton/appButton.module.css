@@ -1,0 +1,20 @@
+.customBtn{
+    color: var(--white);
+    background-color: var(--primary-color);
+    font-size: var(--font-14);
+    font-weight: 500;
+    border-radius: 6px;
+}
+
+.customBtn:hover{
+    color: var(--white);
+    background-color: var(--primary-lighter-shade);
+}
+
+.customBtn:focus{
+    color: var(--white) !important;
+    background-color: var(--primary-color) !important;
+    font-size: var(--font-14);
+    font-weight: 500;
+    border-radius: 6px;
+}
