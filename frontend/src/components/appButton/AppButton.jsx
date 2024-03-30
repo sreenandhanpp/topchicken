@@ -1,8 +1,11 @@
 import React from 'react'
 import styles from './appButton.module.css'
-const AppButton = ({ text, onclick,}) => {
+const AppButton = ({ text, onclick, }) => {
   return (
-    <button className={`btn ${styles.customBtn}`}>{text}</button>
+    <button
+      onClick={onclick}
+      className={`btn ${styles.customBtn}`}
+    >{text}</button>
   )
 }
 

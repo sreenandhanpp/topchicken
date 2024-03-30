@@ -1,0 +1,23 @@
+/* AppInput.module.css */
+
+.input {
+  /* Override Bootstrap's default input styles */
+  border: 1px solid var(--input-border-color--); /* Use your preferred border color */
+  padding: 10px;
+  border-radius: 6px;
+  width: 100%;
+}
+
+/* Focus styles */
+.input:focus {
+  box-shadow: none;
+  outline: none; /* Remove default focus outline */
+  border: 3px solid var(--primary-color); /* Change border color on focus */
+}
+
+.input::placeholder {
+  color: var(--input-text-color--) ;
+  font-family: var(--font-family--);
+  font-size: var(--font-14);
+  font-weight: 400;
+}

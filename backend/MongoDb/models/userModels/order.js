@@ -26,7 +26,7 @@ const orderSchema = new Schema({
         type: String
     },
     qty: {
-        type: Number,
+        type: String,
         required: true
     },
     expectedDate: {

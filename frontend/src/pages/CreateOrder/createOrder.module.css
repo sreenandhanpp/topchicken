@@ -1,0 +1,27 @@
+.create_order{
+    height: auto;
+    margin-top: 50px;
+}
+
+.input_group{
+    height: 65px;
+}
+
+
+
+@media only screen and (max-width: 768px) {
+   
+   .input_group{
+    height: auto;
+    margin-top: 20px !important;
+   }
+
+   .resp_margin{
+    margin-top: 20px;
+   }
+
+   .create_order{
+    margin-top: 20px;
+   }
+  
+  }
