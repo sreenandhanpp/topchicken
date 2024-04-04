@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import AppInput from '../../components/Input/AppInput';
 import AppButton from '../../components/appButton/AppButton';
-import styles from './createOrder.module.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { USER } from '../../redux/constants/user';
-import { formatDate } from '../../utils/formatDate';
+import styles from './updateOrder.module.css';
 
-
-
-const CreateOrder = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+const UpdateOrder = () => {
     const [errors, setErrors] = useState([]);
     const [formValues, setFormValues] = useState({
         branch: '',
@@ -24,9 +19,9 @@ const CreateOrder = () => {
         expectedDate: '',
         orderedBy: ''
     });
-
-    const newErrors = [];
-
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { id } = useParams();
     const enumData = {
         branch: ['Main Branch', 'Branch A', 'Branch B', 'Branch C'],
         product: ['Chicken', 'Beef', 'Pork', 'Fish'],
@@ -35,118 +30,87 @@ const CreateOrder = () => {
         quantity: ['1kg', '2kg', '3', '4', '5']
     };
 
+    useEffect(() => {
+        dispatch({ type: USER.FETCH_ORDER_REQUEST });
+
+        axios.get(import.meta.env.VITE_ROOT_URL + 'user/api/get-order/' + id,)
+            .then(res => {
+                console.log(res);
+                setFormValues({
+                    ...formValues,
+                    branch: res.data.order.branch,
+                    product: res.data.order.product,
+                    flavour: res.data.order.flavour,
+                    size: res.data.order.size,
+                    qty: res.data.order.qty,
+                    expectedDate: res.data.order.expectedDate,
+                    orderedBy: res.data.order.orderedBy
+                });
+
+                dispatch({ type: USER.FETCH_ORDER_SUCCESS, payload: res.data.order });
+            })
+            .catch(err => {
+                dispatch({ type: USER.FETCH_ORDER_FAILED, payload: err.response.data.message });
+            });
+    }, []);
+
+    const newErrors = [];
 
     const validateForm = () => {
-        const newErrors = [];
-
-        // Check if the branch is empty or set to the default value
-        if (!formValues.branch) {
-            newErrors.push({ field: 'branch', message: 'Please select a branch' });
-        }
-
-        // Check if the product is empty or set to the default value
-        if (!formValues.product) {
-            newErrors.push({ field: 'product', message: 'Please select a product' });
-        }
-
-        // Check if the flavour is empty or set to the default value
-        if (!formValues.flavour) {
-            newErrors.push({ field: 'flavour', message: 'Please select a flavour' });
-        }
-
-        // Check if the size is empty or set to the default value
-        if (!formValues.size) {
-            newErrors.push({ field: 'size', message: 'Please select a size' });
-        }
-
-        // Check if the quantity is empty or set to the default value
-        if (!formValues.qty) {
-            newErrors.push({ field: 'qty', message: 'Please select a quantity' });
-        }
-
-        // Check if the expectedDate is empty
-        if (!formValues.expectedDate || formValues.expectedDate.trim() === '') {
-            newErrors.push({ field: 'expectedDate', message: 'Expected Date is required' });
-        }
-
-        // Check if the orderedBy field is empty
-        if (!formValues.orderedBy || formValues.orderedBy.trim() === '') {
-            newErrors.push({ field: 'orderedBy', message: 'Ordered by is required' });
-        }
-
-        setErrors(newErrors);
         return newErrors;
     };
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const currentErr = await validateForm();
-        console.log(formValues)
-        if (currentErr.length === 0) {
+
+        const newErrors = await validateForm();
+
+        if (newErrors.length === 0) {
             try {
-                formValues.expectedDate = await formatDate(formValues.expectedDate);
+                dispatch({ type: USER.UPDATE_ORDER_REQUEST });
 
-                // Dispatch an action to indicate the start of the campaign creation process
-                dispatch({ type: USER.CREATE_ORDER_FAILED });
-
-                // Make an HTTP POST request to create a new campaign
-                axios.post(import.meta.env.VITE_ROOT_URL + 'user/api/create-order', formValues)
+                axios.put(import.meta.env.VITE_ROOT_URL + 'user/api/update-order/' + id, formValues)
                     .then(res => {
-                        if (res.status === 201) {
-                            // If the creation is successful, dispatch a success action
-                            dispatch({ type: USER.CREATE_ORDER_SUCCESS });
-
-                            // Redirect to '/' route
+                        if (res.status === 200) {
+                            dispatch({ type: USER.UPDATE_ORDER_SUCCESS });
                             navigate('/', { replace: true });
-
-                            // Display a success message using a toast notification
-                            toast.success(res.data.message, {
-                                position: toast.POSITION.BOTTOM_CENTER
-                            });
+                            toast.success(res.data.message, { position: toast.POSITION.BOTTOM_CENTER });
                         }
                     })
                     .catch(err => {
-
-                        // Display an error message using a toast notification
-                        toast.error(err.response.data.message, {
-                            position: toast.POSITION.BOTTOM_CENTER
-                        });
-                        // Dispatch a failure action with the error payload
-                        dispatch({ type: USER.CREATE_ORDER_FAILED, payload: err });
+                        toast.error(err.response.data.message, { position: toast.POSITION.BOTTOM_CENTER });
+                        dispatch({ type: USER.UPDATE_ORDER_FAILED, payload: err });
                     });
             } catch (err) {
-                console.log(err)
-                // Display a generic error message
-                toast.error("Something went wrong while creating the order", {
+                toast.error("Something went wrong while updating the order", {
                     position: toast.POSITION.BOTTOM_CENTER
                 });
 
-                // Dispatch a failure action if an error occurs during the creation process
-                dispatch({ type: USER.CREATE_ORDER_FAILED, payload: err });
+                dispatch({ type: USER.UPDATE_ORDER_FAILED, payload: err });
             }
         } else {
-            setErrors(currentErr)
+            setErrors(newErrors);
         }
     };
 
     const handleChange = (e, fieldName) => {
-        setFormValues((prev) => ({
+        setFormValues(prev => ({
             ...prev,
             [e.target.name]: e.target.value
         }));
 
-        const updatedErrors = errors.filter((error) => error.field !== fieldName);
+        const updatedErrors = errors.filter(error => error.field !== fieldName);
         setErrors(updatedErrors);
     };
 
+
     return (
-        <div className={styles.create_order}>
+        <div className={styles.update_order}>
             <div className="container">
                 <div className="row justify-content-center align-items-center">
                     <div className="col-md-12">
                         <div className="">
-                            <h1 className='p-3'>Create Order</h1>
+                            <h1 className='p-3'>Update Order</h1>
                             <form>
                                 <div className={`row m-2 ${styles.input_group}`}>
                                     <div className="col-md-6">
@@ -158,6 +122,7 @@ const CreateOrder = () => {
                                             options={enumData.branch}
                                             handleChange={handleChange}
                                             errors={errors}
+                                            value={formValues.branch}
                                         />
                                     </div>
                                     <div className={`col-md-6 ${styles.resp_margin}`}>
@@ -169,6 +134,7 @@ const CreateOrder = () => {
                                             options={enumData.product}
                                             handleChange={handleChange}
                                             errors={errors}
+                                            value={formValues.product}
                                         />
                                     </div>
                                 </div>
@@ -182,6 +148,7 @@ const CreateOrder = () => {
                                             options={enumData.flavour}
                                             handleChange={handleChange}
                                             errors={errors}
+                                            value={formValues.flavour}
                                         />
                                     </div>
                                     <div className={`col-md-6 ${styles.resp_margin}`}>
@@ -193,6 +160,7 @@ const CreateOrder = () => {
                                             options={enumData.size}
                                             handleChange={handleChange}
                                             errors={errors}
+                                            value={formValues.size}
                                         />
                                     </div>
                                 </div>
@@ -206,6 +174,7 @@ const CreateOrder = () => {
                                             options={enumData.quantity}
                                             handleChange={handleChange}
                                             errors={errors}
+                                            value={formValues.qty}
                                         />
                                     </div>
                                     <div className={`col-md-6 ${styles.resp_margin}`}>
@@ -216,6 +185,7 @@ const CreateOrder = () => {
                                             name="expectedDate"
                                             handleChange={handleChange}
                                             errors={errors}
+                                            value={formValues.expectedDate}
                                         />
                                     </div>
                                 </div>
@@ -228,10 +198,11 @@ const CreateOrder = () => {
                                             name="orderedBy"
                                             handleChange={handleChange}
                                             errors={errors}
+                                            value={formValues.orderedBy}
                                         />
                                     </div>
                                     <div className={`col-md-6 d-flex justify-content-end align-items-center ${styles.resp_margin}`}>
-                                        <AppButton onclick={handleSubmit} text="Create Order" />
+                                        <AppButton onclick={handleSubmit} text="Update Order" />
                                     </div>
                                 </div>
                             </form>
@@ -243,4 +214,4 @@ const CreateOrder = () => {
     );
 };
 
-export default CreateOrder;
+export default UpdateOrder;

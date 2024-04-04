@@ -7,7 +7,7 @@ const orderSchema = new Schema({
         required: true,
         unique: true
     },
-    branch:{
+    branch: {
         type: String,
         required: true,
     },
@@ -30,11 +30,16 @@ const orderSchema = new Schema({
         required: true
     },
     expectedDate: {
-        type: Date
+        type: String
     },
     orderedBy: {
         type: String,
         required: true
+    },
+    status: {
+        type: String,
+        enum: ['Pending', 'Processing', 'Completed'], 
+        default: 'Pending' 
     }
 });
 

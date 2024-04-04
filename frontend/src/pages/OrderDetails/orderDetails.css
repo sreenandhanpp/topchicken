@@ -1,0 +1,22 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid #b99797;
+  }
+  th, td {
+    border: 1px solid #6d6565;
+    padding: 10px;
+    text-align: left;
+  }
+  th {
+    background-color: #c8bbbb;
+    font-weight: bold;
+  }
+
+  .count{
+    font-weight: 500;
+  }
+
+  a{
+    text-decoration: none;
+  }

@@ -143,7 +143,7 @@ module.exports = {
           reject("No orders found"); // Reject if no orders exist in the database
           return;
         }
-
+          console.log(orders)
         resolve(orders); // Resolve with the array of orders
       } catch (error) {
         // Handle exceptions

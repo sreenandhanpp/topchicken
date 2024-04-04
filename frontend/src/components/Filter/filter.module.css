@@ -1,0 +1,37 @@
+.filter_input {
+  /* Override Bootstrap's default filer_input styles */
+  border: 1px solid var(--input-border-color--); /* Use your preferred border color */
+  border-radius: 6px;
+  width: 100%;
+}
+
+/* Focus styles */
+.filter_input:focus {
+  box-shadow: none;
+  outline: none; /* Remove default focus outline */
+  border: 3px solid var(--primary-color); /* Change border color on focus */
+}
+
+.filter_input::placeholder {
+  color: var(--input-text-color--);
+  font-family: var(--font-family--);
+  font-size: var(--font-14);
+  font-weight: 400;
+}
+
+.filter_label {
+  font-size: var(--font-14);
+  color: var(--input-text-color--);
+  font-weight: 400;
+  font-family: var(--font-family--);
+}
+/* filter.module.css */
+.filterRow {
+  transition: max-height 0.6s ease-in-out;
+  max-height: 300px; /* Adjust as needed */
+  overflow: hidden;
+}
+
+.filterRowClosed {
+  max-height: 0;
+}

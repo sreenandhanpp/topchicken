@@ -1,0 +1,30 @@
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #b99797;
+  table-layout: fixed; /* Ensure equal column width */
+}
+
+.order-table th,
+.order-table td {
+  border: 1px solid #6d6565;
+  padding: 10px;
+  text-align: left;
+  width: 33.33%; /* Equal width for each column */
+}
+
+.order-table th {
+  background-color: #c8bbbb;
+  font-weight: bold;
+}
+
+.order-table a{
+  text-decoration:none ;
+}
+
+.filter_options{
+  max-height: 40px;
+  font-size: 12px;
+}
+
+
