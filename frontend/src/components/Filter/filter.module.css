@@ -9,7 +9,7 @@
 .filter_input:focus {
   box-shadow: none;
   outline: none; /* Remove default focus outline */
-  border: 3px solid var(--primary-color); /* Change border color on focus */
+  border: 1px solid var(--input-border-color--); /* Change border color on focus */
 }
 
 .filter_input::placeholder {
@@ -35,3 +35,24 @@
 .filterRowClosed {
   max-height: 0;
 }
+
+/* styles.module.css */
+
+.options_container {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  z-index: 1000;
+  width: 200px; /* Set width of options container */
+  max-height: 200px; /* Set maximum height of options container */
+  overflow-y: auto; /* Enable vertical scrolling */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+
+}
+
+.checkbox_label {
+  display: block;
+  margin-bottom: 5px;
+}
+

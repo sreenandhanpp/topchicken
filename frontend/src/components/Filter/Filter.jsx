@@ -1,11 +1,27 @@
 // Filter.js
-
+import { useState } from "react";
 import AppButton from "../appButton/AppButton";
+import styles from './filter.module.css';
 
 const Filter = ({ options, filters, handleFilterChange, onFilterClick, onClearFilters }) => {
-    const HandleFilterChange = (e) => {
-        const { name, value } = e.target;
-        handleFilterChange(name, value);
+    const [showOptions, setShowOptions] = useState(null); // Track the currently clicked select input
+
+    const toggleOptions = (optionName) => {
+        setShowOptions(showOptions === optionName ? null : optionName); // Toggle options visibility for the clicked select input
+    };
+
+    const handleCheckboxChange = (optionName, optionValue) => {
+        const newFilters = { ...filters };
+        if (newFilters[optionName]) {
+            if (newFilters[optionName].includes(optionValue)) {
+                newFilters[optionName] = newFilters[optionName].filter(value => value !== optionValue);
+            } else {
+                newFilters[optionName].push(optionValue);
+            }
+        } else {
+            newFilters[optionName] = [optionValue];
+        }
+        handleFilterChange(optionName, newFilters[optionName]);
     };
 
     return (
@@ -18,24 +34,37 @@ const Filter = ({ options, filters, handleFilterChange, onFilterClick, onClearFi
                             <input
                                 type="date"
                                 id={option.name}
-                                className="form-control"
+                                className={`${styles.filter_input} form-control`}
                                 name={option.name}
                                 value={filters[option.name]} // Set value from filters state
-                                onChange={HandleFilterChange}
+                                onChange={handleFilterChange}
                             />
                         ) : (
-                            <select
-                                id={option.name}
-                                className="form-select"
-                                name={option.name}
-                                value={filters[option.name]} // Set value from filters state
-                                onChange={HandleFilterChange}
-                            >
-                                <option value="">All</option>
-                                {option.values.map((value) => (
-                                    <option value={value} key={value}>{value}</option>
-                                ))}
-                            </select>
+                            <div className="select-wrapper">
+                                <input
+                                    type="text"
+                                    className={`${styles.filter_input} form-control`}
+                                    id={option.name}
+                                    readOnly
+                                    onClick={() => toggleOptions(option.name)} // Pass the option name to toggleOptions
+                                    value={filters[option.name]?.join(', ') || 'Select'}
+                                />
+                                {showOptions === option.name && ( // Show options only if showOptions matches the current option name
+                                    <div className={styles.options_container}>
+                                        {option.values.map((value) => (
+                                            <label key={value} className={styles.checkbox_label}>
+                                                <input
+                                                    
+                                                    type="checkbox"
+                                                    checked={(filters[option.name] || []).includes(value)}
+                                                    onChange={() => handleCheckboxChange(option.name, value)}
+                                                />
+                                                {value}
+                                            </label>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </div>
                 ))}
@@ -48,4 +77,4 @@ const Filter = ({ options, filters, handleFilterChange, onFilterClick, onClearFi
     );
 };
 
-export default Filter
+export default Filter;

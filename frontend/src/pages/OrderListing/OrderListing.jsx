@@ -14,12 +14,13 @@ function OrderListing() {
     const { orders, loading, error } = useSelector(state => state.fetchAllOrders);
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [filters, setFilters] = useState({
-        branch: '',
-        product: '',
-        status: '',
+        branch: [],
+        product: [],
+        status: [],
         expectedDate: '',
         createdDate: ''
     });
+    
     console.log(filters)
 
     useEffect(() => {
@@ -46,16 +47,17 @@ function OrderListing() {
         // Apply filtering logic here
         const filteredOrders = orders.filter(order => {
             // Check if each order matches the filter criteria
-            const branchMatch = !filters.branch || order.branch === filters.branch;
-            const productMatch = !filters.product || order.product === filters.product;
-            const statusMatch = !filters.status || order.status === filters.status;
-            const expectedDateMatch = !filters.expectedDate || order.expectedDate === filters.expectedDate;
-            const createdDateMatch = !filters.createdDate || order.createdDate === filters.createdDate;
+            const branchMatch = !filters.branch.length || filters.branch.includes(order.branch);
+            const productMatch = !filters.product.length || filters.product.includes(order.product);
+            const statusMatch = !filters.status.length || filters.status.includes(order.status);
+            const expectedDateMatch = !filters.expectedDate || order.expectedDate >= filters.expectedDate;
+            const createdDateMatch = !filters.createdDate || order.createdDate >= filters.createdDate;
             return branchMatch && productMatch && statusMatch && expectedDateMatch && createdDateMatch;
         });
         // Update the state with the filtered orders
         setFilteredOrders(filteredOrders);
     };
+    
 
     const handleClearFilters = () => {
         setFilters({
